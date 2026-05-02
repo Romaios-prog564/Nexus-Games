@@ -3,136 +3,54 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Dashboard — NEXUS GAMES</title>
-  <link rel="stylesheet" href="main.css" />
-  <style>
-    /* Extra fade-in animation for cards */
-    .game-card { animation: card-in 0.5s cubic-bezier(0.175,0.885,0.32,1.275) both; }
-    .game-card:nth-child(1) { animation-delay: 0.1s; }
-    .game-card:nth-child(2) { animation-delay: 0.2s; }
-    .game-card:nth-child(3) { animation-delay: 0.3s; }
-    @keyframes card-in { from { opacity:0; transform:translateY(30px) scale(0.95); } to { opacity:1; transform:translateY(0) scale(1); } }
-    .dashboard-header { animation: fade-in 0.5s ease both; }
-    @keyframes fade-in { from { opacity:0; transform:translateY(-10px); } to { opacity:1; transform:translateY(0); } }
-  </style>
+  <title>Cube Runner — NEXUS GAMES</title>
+  <link rel="stylesheet" href="games.css" />
 </head>
 <body>
-  <div class="bg-gradient"></div>
-  <div class="grid-overlay"></div>
-  <canvas id="particles-canvas"></canvas>
-  <div class="orb orb-1"></div>
-  <div class="orb orb-2"></div>
-
-  <!-- Navbar -->
-  <nav class="navbar">
-    <a class="navbar-logo" href="index.html">⬡ NEXUS</a>
-    <div class="navbar-right">
-      <div class="user-badge">
-        <span class="dot"></span>
-        <span id="username-display">Player</span>
+  <!-- Game Navbar -->
+  <nav class="game-navbar">
+    <div class="game-nav-left">
+      <a href="dashboard.html" class="back-btn">← BACK</a>
+      <span class="game-title">CUBE RUNNER</span>
+    </div>
+    <div class="game-nav-right">
+      <div class="stat-item">
+        <span class="stat-label">SCORE</span>
+        <span class="stat-value" id="score-display">0</span>
       </div>
-      <button id="logout-btn" class="btn btn-danger">LOGOUT</button>
+      <div class="stat-item">
+        <span class="stat-label">BEST</span>
+        <span class="stat-value hi" id="hi-display">0</span>
+      </div>
     </div>
   </nav>
 
-  <!-- Dashboard Content -->
-  <div class="dashboard">
-    <div class="dashboard-header">
-      <h1>GAME HUB</h1>
-      <p>SELECT YOUR GAME AND BREAK YOUR RECORDS</p>
-    </div>
-
-    <!-- Game Cards -->
-    <div class="games-grid">
-
-      <!-- Game 1 -->
-      <a href="game1.html" class="game-card cyan">
-        <span class="card-icon">🟦</span>
-        <div class="card-number">GAME 01</div>
-        <div class="card-title">CUBE RUNNER</div>
-        <div class="card-desc">Dodge incoming obstacles at breakneck speed. Switch lanes to survive. How long can you last?</div>
-        <div class="card-score">
-          <span class="label">HIGH SCORE</span>
-          <span class="value" id="score-cube-runner">0</span>
-        </div>
-        <div class="play-btn">PLAY NOW →</div>
-      </a>
-
-      <!-- Game 2 -->
-      <a href="game2.html" class="game-card magenta">
-        <span class="card-icon">🔮</span>
-        <div class="card-number">GAME 02</div>
-        <div class="card-title">BALL JUMP</div>
-        <div class="card-desc">Leap from platform to platform in an endless climb. Gravity is your enemy. Reach for the stars!</div>
-        <div class="card-score">
-          <span class="label">HIGH SCORE</span>
-          <span class="value" id="score-ball-jump">0</span>
-        </div>
-        <div class="play-btn">PLAY NOW →</div>
-      </a>
-
-      <!-- Game 3 -->
-      <a href="game3.html" class="game-card green">
-        <span class="card-icon">🎯</span>
-        <div class="card-number">GAME 03</div>
-        <div class="card-title">TARGET SHOOTER</div>
-        <div class="card-desc">Click targets in pseudo-3D space. Far targets score more. Beat the clock before time runs out!</div>
-        <div class="card-score">
-          <span class="label">HIGH SCORE</span>
-          <span class="value" id="score-target-shooter">0</span>
-        </div>
-        <div class="play-btn">PLAY NOW →</div>
-      </a>
-
-    </div>
-
-    <!-- High Scores Summary -->
-    <div class="scores-section">
-      <h2>⚡ YOUR STATS</h2>
-      <div class="scores-grid">
-        <div class="score-item">
-          <div class="game-name">Cube Runner</div>
-          <div class="score-val" id="stat-cube-runner">0</div>
-        </div>
-        <div class="score-item">
-          <div class="game-name">Ball Jump</div>
-          <div class="score-val" id="stat-ball-jump">0</div>
-        </div>
-        <div class="score-item">
-          <div class="game-name">Target Shooter</div>
-          <div class="score-val" id="stat-target-shooter">0</div>
-        </div>
-        <div class="score-item">
-          <div class="game-name">Total Points</div>
-          <div class="score-val" id="stat-total">0</div>
-        </div>
+  <div class="game-wrapper">
+    <!-- Overlay -->
+    <div class="overlay" id="overlay">
+      <div class="overlay-title" id="overlay-title">CUBE RUNNER</div>
+      <div class="overlay-subtitle">DODGE THE OBSTACLES</div>
+      <div class="overlay-score-label">SCORE</div>
+      <div class="overlay-score" id="overlay-score-val"></div>
+      <div class="overlay-hi" id="overlay-hi">BEST: 0</div>
+      <div class="overlay-controls">
+        ← → Arrow Keys or A/D to move<br/>
+        Click buttons below on mobile
       </div>
+      <button class="btn-play" id="start-btn">START GAME</button>
+      <a href="dashboard.html" class="btn-secondary">← BACK TO HUB</a>
+    </div>
+
+    <canvas id="game-canvas"></canvas>
+
+    <!-- Mobile Touch Controls -->
+    <div class="touch-controls">
+      <div class="touch-btn" id="btn-left">◀</div>
+      <div class="touch-btn" id="btn-right">▶</div>
     </div>
   </div>
 
-  <footer>
-    <p>⬡ NEXUS GAMES &nbsp;|&nbsp; PURE VANILLA JS &nbsp;|&nbsp; NO FRAMEWORKS</p>
-  </footer>
-
   <script src="auth.js"></script>
-  <script src="main.js"></script>
-  <script>
-    // Also update stat items
-    document.addEventListener('DOMContentLoaded', () => {
-      const user = Auth.getCurrentUser();
-      if (!user) return;
-      const games = ['cube-runner', 'ball-jump', 'target-shooter'];
-      let total = 0;
-      games.forEach(g => {
-        const s = Scores.getHighScore(user.username, g);
-        total += s;
-        const statEl = document.getElementById(`stat-${g}`);
-        if (statEl) statEl.textContent = s;
-      });
-      const totalEl = document.getElementById('stat-total');
-      if (totalEl) totalEl.textContent = total;
-    });
-  </script>
+  <script src="game1.js"></script>
 </body>
 </html>
-
