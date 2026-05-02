@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Target Shooter — NEXUS GAMES</title>
+  <link rel="stylesheet" href="styles/games.css" />
+</head>
+<body>
+  <!-- Game Navbar -->
+  <nav class="game-navbar">
+    <div class="game-nav-left">
+      <a href="dashboard.html" class="back-btn">← BACK</a>
+      <span class="game-title">TARGET SHOOTER</span>
+    </div>
+    <div class="game-nav-right">
+      <div class="stat-item">
+        <span class="stat-label">SCORE</span>
+        <span class="stat-value" id="score-display">0</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-label">TIME</span>
+        <span class="stat-value" id="timer-display">30</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-label">BEST</span>
+        <span class="stat-value hi" id="hi-display">0</span>
+      </div>
+    </div>
+  </nav>
+
+  <div class="game-wrapper">
+    <!-- Overlay -->
+    <div class="overlay" id="overlay">
+      <div class="overlay-title" id="overlay-title">TARGET SHOOTER</div>
+      <div class="overlay-subtitle">CLICK TO SHOOT</div>
+      <div class="overlay-score-label">SCORE</div>
+      <div class="overlay-score" id="overlay-score-val"></div>
+      <div class="overlay-hi" id="overlay-hi">BEST: 0</div>
+      <div class="overlay-controls">
+        Click / Tap targets to score<br/>
+        Farther targets = more points<br/>
+        You have 30 seconds — GO!
+      </div>
+      <button class="btn-play" id="start-btn">START GAME</button>
+      <a href="dashboard.html" class="btn-secondary">← BACK TO HUB</a>
+    </div>
+
+    <canvas id="game-canvas"></canvas>
+  </div>
+
+  <script src="scripts/auth.js"></script>
+  <script src="scripts/game3.js"></script>
+</body>
+</html>

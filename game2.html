@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ball Jump — NEXUS GAMES</title>
+  <link rel="stylesheet" href="styles/games.css" />
+</head>
+<body>
+  <!-- Game Navbar -->
+  <nav class="game-navbar">
+    <div class="game-nav-left">
+      <a href="dashboard.html" class="back-btn">← BACK</a>
+      <span class="game-title">BALL JUMP</span>
+    </div>
+    <div class="game-nav-right">
+      <div class="stat-item">
+        <span class="stat-label">HEIGHT</span>
+        <span class="stat-value" id="score-display">0</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-label">BEST</span>
+        <span class="stat-value hi" id="hi-display">0</span>
+      </div>
+    </div>
+  </nav>
+
+  <div class="game-wrapper">
+    <!-- Overlay -->
+    <div class="overlay" id="overlay">
+      <div class="overlay-title" id="overlay-title">BALL JUMP</div>
+      <div class="overlay-subtitle">REACH THE TOP</div>
+      <div class="overlay-score-label">HEIGHT</div>
+      <div class="overlay-score" id="overlay-score-val"></div>
+      <div class="overlay-hi" id="overlay-hi">BEST: 0</div>
+      <div class="overlay-controls">
+        ← → Arrow Keys or A/D to move<br/>
+        Hold on mobile controls below
+      </div>
+      <button class="btn-play" id="start-btn">START GAME</button>
+      <a href="dashboard.html" class="btn-secondary">← BACK TO HUB</a>
+    </div>
+
+    <canvas id="game-canvas"></canvas>
+
+    <!-- Mobile Touch Controls -->
+    <div class="touch-controls">
+      <div class="touch-btn" id="btn-left">◀</div>
+      <div class="touch-btn" id="btn-right">▶</div>
+    </div>
+  </div>
+
+  <script src="scripts/auth.js"></script>
+  <script src="scripts/game2.js"></script>
+</body>
+</html>
