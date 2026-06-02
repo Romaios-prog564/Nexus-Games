@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Memory Match — NEXUS GAMES</title>
+  <link rel="stylesheet" href="games.css" />
+
+  <link rel="icon" type="image/png" href="/favicon-96x96.png?v=2" sizes="96x96" />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg?v=2" />
+  <link rel="shortcut icon" href="/favicon.ico?v=2" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?v=2" />
+  <meta name="apple-mobile-web-app-title" content="NXS-Games" />
+  <link rel="manifest" href="/site.webmanifest?v=2" />
+
+  <style>
+    #card-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      padding: 16px;
+      width: 100%;
+      max-width: 380px;
+      margin: 0 auto;
+    }
+    .mem-card {
+      aspect-ratio: 1;
+      cursor: pointer;
+      position: relative;
+      transform-style: preserve-3d;
+      transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      border-radius: 10px;
+    }
+    .mem-card.revealed { transform: rotateY(180deg); pointer-events: none; }
+    .mem-card.matched { transform: rotateY(180deg); pointer-events: none; }
+    .mem-face {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 10px;
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+      font-size: 1.8rem;
+    }
+    .mem-face.back {
+      background: rgba(10, 15, 40, 0.95);
+      border: 1px solid rgba(0, 245, 255, 0.25);
+      color: rgba(0, 245, 255, 0.4);
+      font-size: 1.2rem;
+      font-family: 'Orbitron', sans-serif;
+      box-shadow: 0 0 12px rgba(0, 245, 255, 0.08), inset 0 1px 0 rgba(255,255,255,0.05);
+    }
+    .mem-face.front {
+      background: rgba(20, 10, 50, 0.98);
+      border: 1px solid rgba(139, 0, 255, 0.5);
+      transform: rotateY(180deg);
+      box-shadow: 0 0 20px rgba(139, 0, 255, 0.25);
+    }
+    .mem-card.matched .mem-face.front {
+      border-color: rgba(0, 255, 136, 0.7);
+      box-shadow: 0 0 25px rgba(0, 255, 136, 0.4);
+      background: rgba(0, 40, 20, 0.9);
+    }
+    .game-wrapper {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+  </style>
+</head>
+<body>
+  <nav class="game-navbar">
+    <div class="game-nav-left">
+      <a href="dashboard.html" class="back-btn">← BACK</a>
+      <span class="game-title">MEMORY MATCH</span>
+    </div>
+    <div class="game-nav-right">
+      <div class="stat-item">
+        <span class="stat-label">SCORE</span>
+        <span class="stat-value" id="score-display">0</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-label">TIME</span>
+        <span class="stat-value" id="timer-display">60</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-label">BEST</span>
+        <span class="stat-value hi" id="hi-display">0</span>
+      </div>
+    </div>
+  </nav>
+
+  <div class="game-wrapper">
+    <div class="overlay" id="overlay">
+      <div class="overlay-title" id="overlay-title">MEMORY MATCH</div>
+      <div class="overlay-subtitle">FIND ALL PAIRS</div>
+      <div class="overlay-score-label">SCORE</div>
+      <div class="overlay-score" id="overlay-score-val"></div>
+      <div class="overlay-hi" id="overlay-hi">BEST: 0</div>
+      <div class="overlay-controls">
+        Click cards to reveal symbols<br/>
+        Match all 8 pairs before time runs out!<br/>
+        Faster = bigger time bonus points
+      </div>
+      <button class="btn-play" id="start-btn">START GAME</button>
+      <a href="dashboard.html" class="btn-secondary">← BACK TO HUB</a>
+    </div>
+    <div id="card-grid"></div>
+  </div>
+
+  <script src="auth.js"></script>
+  <script src="game6.js"></script>
+</body>
+</html>

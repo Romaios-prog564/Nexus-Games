@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard — NEXUS GAMES</title>
+
+  <link rel="stylesheet" href="main.css" />
+  <link rel="icon" type="image/png" href="favicon-96x96.png?v=3" sizes="96x96" />
+  <link rel="icon" type="image/svg+xml" href="favicon.svg?v=3" />
+  <link rel="icon" href="favicon.ico" type="image/x-icon?v=3">
+  <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png?v=3" />
+  <meta name="apple-mobile-web-app-title" content="NXS-Games" />
+  <link rel="manifest" href="site.webmanifest?v=3" />
+  
+  <style>
+    /* Card badge labels */
+    .game-card { position: relative; overflow: visible !important; text-decoration: none !important; }
+    .game-card * { text-decoration: none !important; }
+
+    .card-badge {
+      position: absolute;
+      top: -16px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.58rem;
+      letter-spacing: 2px;
+      padding: 4px 14px;
+      border-radius: 20px;
+      white-space: nowrap;
+      pointer-events: none;
+      z-index: 10;
+      text-decoration: none !important;
+      display: inline-block;
+      line-height: 1.4;
+    }
+    .badge-new {
+      background: rgba(0,245,255,0.15);
+      border: 1px solid #00f5ff;
+      color: #00f5ff;
+      box-shadow: 0 0 10px rgba(0,245,255,0.6), 0 0 22px rgba(0,245,255,0.2);
+      text-shadow: 0 0 8px #00f5ff;
+    }
+    .badge-freshly-new {
+      background: rgba(0,255,136,0.15);
+      border: 1px solid #00ff88;
+      color: #00ff88;
+      box-shadow: 0 0 10px rgba(0,255,136,0.6), 0 0 22px rgba(0,255,136,0.2);
+      text-shadow: 0 0 8px #00ff88;
+    }
+    .badge-popular {
+      background: rgba(255,0,200,0.15);
+      border: 1px solid #ff00cc;
+      color: #ff00cc;
+      box-shadow: 0 0 12px rgba(255,0,200,0.6), 0 0 26px rgba(255,0,200,0.2);
+      text-shadow: 0 0 8px #ff00cc;
+    }
+
+    /* Remove link underline/strikethrough from badges */
+    .game-card .card-badge {
+      text-decoration: none !important;
+      text-decoration-line: none !important;
+    }
+    /* Glow rings on badged cards */
+    .game-card.glow-cyan  { box-shadow: 0 0 0 2px rgba(0,245,255,0.5), 0 0 30px rgba(0,245,255,0.2), 0 8px 32px rgba(0,0,0,0.4); }
+    .game-card.glow-green { box-shadow: 0 0 0 2px rgba(0,255,136,0.55), 0 0 30px rgba(0,255,136,0.22), 0 8px 32px rgba(0,0,0,0.4); }
+    .game-card.glow-pink  { box-shadow: 0 0 0 2px rgba(255,0,200,0.55), 0 0 30px rgba(255,0,200,0.22), 0 8px 32px rgba(0,0,0,0.4); }
+
+    /* Card animations */
+    .game-card { animation: card-in 0.5s cubic-bezier(0.175,0.885,0.32,1.275) both; }
+    .game-card:nth-child(1) { animation-delay: 0.05s; }
+    .game-card:nth-child(2) { animation-delay: 0.10s; }
+    .game-card:nth-child(3) { animation-delay: 0.15s; }
+    .game-card:nth-child(4) { animation-delay: 0.20s; }
+    .game-card:nth-child(5) { animation-delay: 0.25s; }
+    .game-card:nth-child(6) { animation-delay: 0.30s; }
+    .game-card:nth-child(7) { animation-delay: 0.35s; }
+    @keyframes card-in { from { opacity:0; transform:translateY(30px) scale(0.95); } to { opacity:1; transform:translateY(0) scale(1); } }
+    .dashboard-header { animation: fade-in 0.5s ease both; }
+    @keyframes fade-in { from { opacity:0; transform:translateY(-10px); } to { opacity:1; transform:translateY(0); } }
+
+    /* Settings icon button */
+    .btn-icon {
+      background: rgba(0,0,0,0.3);
+      border: 1px solid rgba(0,245,255,0.2);
+      color: rgba(180,200,255,0.7);
+      padding: 0.5rem 0.8rem;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 1.1rem;
+      transition: all 0.2s;
+      line-height: 1;
+    }
+    .btn-icon:hover { border-color: #00f5ff; color: #00f5ff; box-shadow: 0 0 12px rgba(0,245,255,0.3); }
+
+    /* Settings Modal */
+    .settings-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.75);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+      backdrop-filter: blur(10px);
+    }
+    .settings-overlay.open { display: flex; }
+    .settings-card {
+      background: rgba(8,12,35,0.98);
+      border: 1px solid rgba(0,245,255,0.3);
+      border-radius: 20px;
+      padding: 2rem;
+      width: 90%;
+      max-width: 420px;
+      position: relative;
+      box-shadow: 0 0 60px rgba(0,245,255,0.1), 0 0 120px rgba(139,0,255,0.08);
+      animation: card-in 0.3s ease;
+    }
+    .settings-close {
+      position: absolute;
+      top: 1rem; right: 1rem;
+      background: none;
+      border: 1px solid rgba(255,255,255,0.15);
+      color: rgba(255,255,255,0.5);
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 0.85rem;
+      transition: all 0.2s;
+    }
+    .settings-close:hover { border-color: #ff4466; color: #ff4466; }
+    .settings-title {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1.1rem;
+      color: #00f5ff;
+      margin-bottom: 1.5rem;
+      letter-spacing: 3px;
+    }
+    .settings-section {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.8rem 0;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+    .settings-section.center { justify-content: center; padding-top: 1.2rem; border-bottom: none; }
+    .settings-label {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.65rem;
+      color: rgba(180,200,255,0.65);
+      letter-spacing: 2px;
+    }
+    .lang-buttons { display: flex; gap: 8px; }
+    .lang-btn {
+      padding: 0.35rem 0.7rem;
+      background: rgba(0,0,0,0.4);
+      border: 1px solid rgba(0,245,255,0.2);
+      border-radius: 6px;
+      color: rgba(180,200,255,0.6);
+      cursor: pointer;
+      font-size: 0.8rem;
+      font-family: 'Rajdhani', sans-serif;
+      transition: all 0.2s;
+    }
+    .lang-btn:hover, .lang-btn.active {
+      border-color: #00f5ff;
+      color: #00f5ff;
+      box-shadow: 0 0 10px rgba(0,245,255,0.25);
+    }
+    .toggle-btn {
+      padding: 0.35rem 1rem;
+      border: 1px solid rgba(0,245,255,0.3);
+      background: rgba(0,245,255,0.08);
+      border-radius: 20px;
+      color: #00f5ff;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.65rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      letter-spacing: 1px;
+      min-width: 58px;
+      text-align: center;
+    }
+    .toggle-btn.off {
+      border-color: rgba(255,255,255,0.15);
+      color: rgba(180,200,255,0.35);
+      background: transparent;
+    }
+
+    /* Star rating */
+    #star-rating-widget { display:flex; gap:4px; }
+    .star-btn {
+      font-size: 1.4rem; cursor: pointer;
+      color: rgba(180,200,255,0.25);
+      transition: color 0.15s, text-shadow 0.15s, transform 0.2s;
+      user-select: none;
+    }
+    .star-btn:hover { transform: scale(1.2); }
+  </style>
+</head>
+<body>
+  <div class="bg-gradient"></div>
+  <div class="grid-overlay"></div>
+  <canvas id="particles-canvas"></canvas>
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+
+  <!-- Navbar -->
+  <nav class="navbar">
+    <a class="navbar-logo" href="index.html" data-i18n="nav-logo">⬡ NEXUS</a>
+    <div class="navbar-right">
+      <div class="user-badge">
+        <span class="dot"></span>
+        <span id="username-display">Player</span>
+      </div>
+      <button id="lb-btn" class="btn-icon" title="Leaderboard">🏆</button>
+      <button id="settings-btn" class="btn-icon" title="Settings">⚙</button>
+    </div>
+  </nav>
+
+  <!-- Dashboard Content -->
+  <div class="dashboard">
+    <div class="dashboard-header">
+      <h1 data-i18n="hub-title">GAME HUB</h1>
+      <p data-i18n="hub-subtitle">SELECT YOUR GAME AND BREAK YOUR RECORDS</p>
+    </div>
+
+    <!-- Game Cards -->
+    <div class="games-grid">
+
+      <!-- Game 1 -->
+      <a href="game1.html" class="game-card cyan">
+        <span class="card-icon">🟦</span>
+        <div class="card-number">GAME 01</div>
+        <div class="card-title">CUBE RUNNER</div>
+        <div class="card-desc">Dodge incoming obstacles at breakneck speed. Switch lanes to survive. Collect 💎 gems for bonus points!</div>
+        <div class="card-score">
+          <span class="label" data-i18n="high-score">HIGH SCORE</span>
+          <span class="value" id="score-cube-runner">0</span>
+        </div>
+        <div class="play-btn" data-i18n="play-now">PLAY NOW →</div>
+      </a>
+
+      <!-- Game 2 -->
+      <a href="game2.html" class="game-card magenta glow-pink">
+        <span class="card-badge badge-popular">★ POPULAR</span>
+        <span class="card-icon">🔮</span>
+        <div class="card-number">GAME 02</div>
+        <div class="card-title">BALL JUMP</div>
+        <div class="card-desc">Leap from platform to platform endlessly. Grab the 🚀 jetpack for a 5-second flight boost! How high can you go?</div>
+        <div class="card-score">
+          <span class="label" data-i18n="high-score">HIGH SCORE</span>
+          <span class="value" id="score-ball-jump">0</span>
+        </div>
+        <div class="play-btn" data-i18n="play-now">PLAY NOW →</div>
+      </a>
+
+      <!-- Game 3 -->
+      <a href="game3.html" class="game-card green">
+        <span class="card-icon">🎯</span>
+        <div class="card-number">GAME 03</div>
+        <div class="card-title">TARGET SHOOTER</div>
+        <div class="card-desc">Shoot targets in pseudo-3D space. Hit rare ✨ golden targets for triple points. Beat the clock!</div>
+        <div class="card-score">
+          <span class="label" data-i18n="high-score">HIGH SCORE</span>
+          <span class="value" id="score-target-shooter">0</span>
+        </div>
+        <div class="play-btn" data-i18n="play-now">PLAY NOW →</div>
+      </a>
+
+      <!-- Game 4 -->
+      <a href="game4.html" class="game-card cyan glow-cyan">
+        <span class="card-badge badge-new">✦ NEW</span>
+        <span class="card-icon">🐍</span>
+        <div class="card-number">GAME 04</div>
+        <div class="card-title">SNAKE</div>
+        <div class="card-desc">Classic snake in a neon arena. Eat food to grow. Grab 💎 gems for +25 pts and a blazing 5-second speed boost!</div>
+        <div class="card-score">
+          <span class="label" data-i18n="high-score">HIGH SCORE</span>
+          <span class="value" id="score-snake">0</span>
+        </div>
+        <div class="play-btn" data-i18n="play-now">PLAY NOW →</div>
+      </a>
+
+      <!-- Game 5 -->
+      <a href="game5.html" class="game-card magenta glow-cyan">
+        <span class="card-badge badge-new">✦ NEW</span>
+        <span class="card-icon">🧱</span>
+        <div class="card-number">GAME 05</div>
+        <div class="card-title">BRICK BREAKER</div>
+        <div class="card-desc">Break all the bricks with your paddle and ball. Catch falling 💎 gems for bonus points. Can you clear the board?</div>
+        <div class="card-score">
+          <span class="label" data-i18n="high-score">HIGH SCORE</span>
+          <span class="value" id="score-brick-breaker">0</span>
+        </div>
+        <div class="play-btn" data-i18n="play-now">PLAY NOW →</div>
+      </a>
+
+      <!-- Game 6 -->
+      <a href="game6.html" class="game-card green glow-cyan">
+        <span class="card-badge badge-new">✦ NEW</span>
+        <span class="card-icon">🃏</span>
+        <div class="card-number">GAME 06</div>
+        <div class="card-title">MEMORY MATCH</div>
+        <div class="card-desc">Flip cards and find all matching pairs before time runs out. Speed is rewarded — faster wins = more points!</div>
+        <div class="card-score">
+          <span class="label" data-i18n="high-score">HIGH SCORE</span>
+          <span class="value" id="score-memory-match">0</span>
+        </div>
+        <div class="play-btn" data-i18n="play-now">PLAY NOW →</div>
+      </a>
+
+      <!-- Game 7 -->
+      <a href="game7.html" class="game-card cyan glow-green">
+        <span class="card-badge badge-freshly-new">⚡ FRESHLY NEW</span>
+        <span class="card-icon">🔵</span>
+        <div class="card-number">GAME 07</div>
+        <div class="card-title">FLAPPY ORB</div>
+        <div class="card-desc">Tap to flap through neon gates in this endless reflex challenge. A color-shifting distance bar tracks your record!</div>
+        <div class="card-score">
+          <span class="label" data-i18n="high-score">HIGH SCORE</span>
+          <span class="value" id="score-flappy-orb">0</span>
+        </div>
+        <div class="play-btn" data-i18n="play-now">PLAY NOW →</div>
+      </a>
+
+    </div>
+
+    <!-- High Scores Summary -->
+    <div class="scores-section">
+      <h2 data-i18n="stats-title">⚡ YOUR STATS</h2>
+      <div class="scores-grid">
+        <div class="score-item">
+          <div class="game-name">Cube Runner</div>
+          <div class="score-val" id="stat-cube-runner">0</div>
+        </div>
+        <div class="score-item">
+          <div class="game-name">Ball Jump</div>
+          <div class="score-val" id="stat-ball-jump">0</div>
+        </div>
+        <div class="score-item">
+          <div class="game-name">Target Shooter</div>
+          <div class="score-val" id="stat-target-shooter">0</div>
+        </div>
+        <div class="score-item">
+          <div class="game-name">Snake</div>
+          <div class="score-val" id="stat-snake">0</div>
+        </div>
+        <div class="score-item">
+          <div class="game-name">Brick Breaker</div>
+          <div class="score-val" id="stat-brick-breaker">0</div>
+        </div>
+        <div class="score-item">
+          <div class="game-name">Memory Match</div>
+          <div class="score-val" id="stat-memory-match">0</div>
+        </div>
+        <div class="score-item">
+          <div class="game-name">Flappy Orb</div>
+          <div class="score-val" id="stat-flappy-orb">0</div>
+        </div>
+        <div class="score-item">
+          <div class="game-name" data-i18n="total-points">Total Points</div>
+          <div class="score-val" id="stat-total">0</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <p>⬡ Nexus Games &nbsp;|&nbsp; Safe for playing &nbsp;|&nbsp; Made with ❤️</p>
+  </footer>
+
+  <!-- Settings Modal -->
+  <div class="settings-overlay" id="settings-overlay">
+    <div class="settings-card">
+      <button class="settings-close" id="settings-close">✕</button>
+      <div class="settings-title" data-i18n="settings-title">⚙ SETTINGS</div>
+
+      <div class="settings-section">
+        <div class="settings-label" data-i18n="lang-label">LANGUAGE</div>
+        <div class="lang-buttons">
+          <button class="lang-btn" data-lang="en">🇬🇧 EN</button>
+          <button class="lang-btn" data-lang="gr">🇬🇷 GR</button>
+          <button class="lang-btn" data-lang="ru">🇷🇺 RU</button>
+        </div>
+      </div>
+
+      <div class="settings-section">
+        <div class="settings-label" data-i18n="sound-label">SOUND EFFECTS</div>
+        <button class="toggle-btn" id="sound-toggle">ON</button>
+      </div>
+
+      <div class="settings-section">
+        <div class="settings-label" data-i18n="particles-label">PARTICLE EFFECTS</div>
+        <button class="toggle-btn" id="particles-toggle">ON</button>
+      </div>
+
+      <div class="settings-section">
+        <div class="settings-label" data-i18n="clear-label">CLEAR HIGH SCORES</div>
+        <button class="btn btn-danger" id="clear-scores-btn" style="font-size:0.7rem;padding:0.4rem 0.8rem;" data-i18n="clear-btn">CLEAR ALL</button>
+      </div>
+
+      <div class="settings-section">
+        <div class="settings-label">RATE NEXUS GAMES</div>
+        <div id="star-rating-widget">
+          <span class="star-btn" data-star="1">★</span>
+          <span class="star-btn" data-star="2">★</span>
+          <span class="star-btn" data-star="3">★</span>
+          <span class="star-btn" data-star="4">★</span>
+          <span class="star-btn" data-star="5">★</span>
+        </div>
+      </div>
+      <div id="rating-thanks" style="display:none;text-align:center;padding:0.4rem 0;"></div>
+
+      <div class="settings-section center">
+        <button class="btn btn-danger" id="settings-logout" data-i18n="logout-btn">LOGOUT</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="auth.js"></script>
+  <script src="i18n.js"></script>
+  <script src="main.js"></script>
+  <script src="leaderboard.js"></script>
+  <script src="chat.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const user = Auth.getCurrentUser();
+      if (!user) return;
+      let total = 0;
+      const games = ['cube-runner', 'ball-jump', 'target-shooter', 'snake', 'brick-breaker', 'memory-match', 'flappy-orb'];
+      games.forEach(g => {
+        const s = Scores.getHighScore(user.username, g);
+        total += s;
+        const statEl = document.getElementById(`stat-${g}`);
+        if (statEl) statEl.textContent = s;
+      });
+      const totalEl = document.getElementById('stat-total');
+      if (totalEl) totalEl.textContent = total;
+    });
+  </script>
+</body>
+</html>
